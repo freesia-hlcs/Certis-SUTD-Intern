@@ -66,3 +66,6 @@ class Bot(object):
 
     def press_lift(self, level):
         return True
+
+    def inform_host(self, host_email):
+        return True

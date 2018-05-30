@@ -9,10 +9,11 @@ class Guide(object):
         # bot is a Bot object
         self.state = 'standby'
         self.face = face
-        self.guest_name = guest_info['name']
-        self.destination = guest_info['destination']
-        self.scheduled_time = guest_info['scheduled_time']
-        self.host = guest_info['host']
+        self.guest_name = guest_info['visitor_name']
+        self.destination = guest_info['meeting_venue']
+        # self.scheduled_time = guest_info['scheduled_time']
+        self.host = guest_info['host_name']
+        self.host_email = guest_info['host_email']
         self.bot = bot
 
     def operate_lift(self, from_level, to_level):

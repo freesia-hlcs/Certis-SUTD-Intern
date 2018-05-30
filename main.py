@@ -7,6 +7,7 @@ def main():
     bot.display(guest_info)
     guide.find_face()
     bot.say('please follow me')
+    bot.inform_host('hi@hi.hi')
     guide.guide_route()
 
 
