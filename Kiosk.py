@@ -10,7 +10,7 @@ class Kiosk(object):
         self.record_file = 'Record.txt'
         self.file_path = os.getcwd() + '/files/'
 
-    def insertIntoList(self, new_json):
+    def insert_into_list(self, new_json):
         fp = open(self.record_file)
         fp = fp.readlines()
         lines = []
@@ -49,8 +49,8 @@ class Kiosk(object):
             new_json = new_json[0]  # Currently we just suppose that each checking loop, there will be at most one json file received.
             # read_json(new_json)
             print(json_list_processed, json_list, new_json)
-            self.insertIntoList(new_json)  # Insert the new file name to the firts line in json file
-            # name,venue,pic = parz_json(new_json)
-            # SendToRobot(name,venue,pic)
+            self.insert_into_list(new_json)  # Insert the new file name to the firts line in json file
+            # name, venue, pic = self.parse_json(new_json)
+            # return name, venue, pic
             name, venue = self.parse_json(new_json)
             return name, venue
