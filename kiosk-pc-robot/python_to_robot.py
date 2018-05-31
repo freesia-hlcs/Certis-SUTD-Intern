@@ -36,12 +36,12 @@ def parz_json(file):
     f = open(file_path + file, encoding='utf-8')
     # Set encoding mode. This parameter needs to be utf-8 or the default mode will be gbk
     content = json.load(f)
-    name, venue = content['visitor_name'],content['meeting_venue']
+    name, venue = content['visitor_name'], content['meeting_venue']
     # picture = file.strip('.json') + '.png'
     # if picture not in pic_list:
     #     print("ERROR:The picture {} is not stored".format(picture))
     # return name,venue,picture
-    return name,venue
+    return name, venue
 
 
 # def SendToRobot(name,venue,pic):

@@ -11,8 +11,7 @@ class Bot(object):
         password_b = password.encode('utf8')
         self.s.send(password_b)
 
-    def receive(self):
-        buffer_size = 4096
+    def receive(self, buffer_size=4096):
         msg_b = self.s.recv(buffer_size)
         msg = msg_b.decode('utf8')
         return msg
@@ -55,17 +54,10 @@ class Bot(object):
             sleep(0.1)
         return True
 
-    def call_lift(self, level):
-        return True
+    def dock(self):
+        command = 'dock'
+        return self.cmd(command)
 
-    def go_in_lift(self):
-        return True
-
-    def go_out_lift(self):
-        return True
-
-    def press_lift(self, level):
-        return True
-
-    def inform_host(self, host_email):
-        return True
+    def undock(self):
+        command = 'undock'
+        return self.cmd(command)
