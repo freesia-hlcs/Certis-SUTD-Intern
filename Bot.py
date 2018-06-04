@@ -61,3 +61,7 @@ class Bot(object):
     def undock(self):
         command = 'undock'
         return self.cmd(command)
+
+    def inform_host(self, host_email):
+        print('Sending email')
+        return True
