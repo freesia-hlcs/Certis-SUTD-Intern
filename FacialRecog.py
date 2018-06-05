@@ -1,3 +1,7 @@
+import cv2
+import os
+
+
 class FacialRecog(object):
 
     def __init__(self, facial_data):
