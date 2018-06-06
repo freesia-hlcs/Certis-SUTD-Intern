@@ -12,31 +12,30 @@ class FacialRecog(object):
         classifier = "haarcascade_frontalface_alt.xml"
         self.face_cascade = cv2.CascadeClassifier(classifier)
         self.face_recognizer = cv2.face.LBPHFaceRecognizer_create()
-        dirs = os.listdir('michael-face')
-        faces_list = []
-        labels = []
-        for file_name in dirs:
-            image_path = 'michael-face/%s' % file_name
-            image = cv2.imread(image_path)
-            cv2.imshow('Training on image...', cv2.resize(image, (400, 500)))
-            cv2.waitKey(100)
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.05, minNeighbors=5)
-            (x, y, w, h) = faces[0]
-            faces_list.append(gray[y:y+w, x:x+h])
-            labels.append(1)
-        cv2.destroyAllWindows()
-        # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.05, minNeighbors=5)
-        # (x, y, w, h) = faces[0]
-        # self.face = gray[y:y+w, x:x+h]
-        # self.rect = faces[0]
-        self.face_recognizer.train(faces_list, np.array(labels))
+        # dirs = os.listdir('michael-face')
+        # faces_list = []
+        # labels = []
+        # for file_name in dirs:
+        #     image_path = 'michael-face/%s' % file_name
+        #     image = cv2.imread(image_path)
+        #     cv2.imshow('Training on image...', cv2.resize(image, (400, 500)))
+        #     cv2.waitKey(100)
+        #     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        #     faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.05, minNeighbors=5)
+        #     (x, y, w, h) = faces[0]
+        #     faces_list.append(gray[y:y+w, x:x+h])
+        #     labels.append(1)
+        # cv2.destroyAllWindows()
+        # self.face_recognizer.train(faces_list, np.array(labels))
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.05, minNeighbors=5)
+        (x, y, w, h) = faces[0]
+        self.face = gray[y:y+w, x:x+h]
+        self.rect = faces[0]
+        self.face_recognizer.train([self.face], np.array([1]))
 
     def identify_face(self, face):
         label, confidence = self.face_recognizer.predict(face)
-        # if confidence > 50:
-        #     label = 0
         return label, confidence
 
     def detect_faces(self, img):
