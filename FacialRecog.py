@@ -15,7 +15,7 @@ class FacialRecog(object):
                        'haarcascades/haarcascade_frontalface_default.xml',  # 2
                        'lbpcascades/lbpcascade_frontalface.xml',            # 3
                        'lbpcascades/lbpcascade_frontalface_improved.xml']   # 4
-        self.face_cascade = cv2.CascadeClassifier('classifiers/' + classifiers[4])
+        self.face_cascade = cv2.CascadeClassifier('classifiers/' + classifiers[2])
         self.face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 
     def add_new(self, name, img):
@@ -28,7 +28,8 @@ class FacialRecog(object):
             (x, y, w, h) = faces[0]
             face = gray[y:y+h, x:x+w]
             cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cv2.imshow('Training', img)
+            h, w, c = img.shape
+            cv2.imshow('Training', cv2.resize(img, (int(w / h * 500), 500)))
             cv2.waitKey(1000)
             self.faces.append(face)
             self.labels.append(label)
