@@ -10,8 +10,12 @@ class FacialRecog(object):
         self.name_list = ['']
         self.faces = []
         self.labels = []
-        classifiers = ['haarcascade_frontalface_alt.xml', 'lbpcascade_frontalface.xml']
-        self.face_cascade = cv2.CascadeClassifier(classifiers[1])
+        classifiers = ['haarcascades/haarcascade_frontalface_alt.xml',      # 0
+                       'haarcascades/haarcascade_frontalface_alt2.xml',     # 1
+                       'haarcascades/haarcascade_frontalface_default.xml',  # 2
+                       'lbpcascades/lbpcascade_frontalface.xml',            # 3
+                       'lbpcascades/lbpcascade_frontalface_improved.xml']   # 4
+        self.face_cascade = cv2.CascadeClassifier('classifiers/' + classifiers[4])
         self.face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 
     def add_new(self, name, img):
@@ -60,7 +64,8 @@ class FacialRecog(object):
 
 if __name__ == '__main__':
     facial_recognition = FacialRecog()
-    facial_recognition.add_new('Michael', cv2.imread('michael.jpg'))
+    # facial_recognition.add_new('Michael', cv2.imread('michael.jpg'))
+    facial_recognition.add_new('Michael', cv2.imread('michael2.jpg'))
     # facial_recognition.add_new('Mei Mei', cv2.imread('meimei.jpg'))
     facial_recognition.add_new('Mei Mei', cv2.imread('meimei2.jpg'))
     facial_recognition.add_new('Xinran', cv2.imread('xinran.jpg'))
