@@ -35,6 +35,10 @@ class Bot(object):
         command = 'goto ' + goal_name
         return self.cmd(command)
 
+    def go_to_level(self, level):
+        command = 'localizeAtGoal ' + level
+        return self.cmd(command)
+
     def check_reached(self, goal_name):
         return True
 
