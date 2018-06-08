@@ -19,11 +19,11 @@ class FacialRecog(object):
             self.name_list.append(name)
         label = self.name_list.index(name)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.05, minNeighbors=5)
+        faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5)
         if len(faces) == 1:
             (x, y, w, h) = faces[0]
-            # face = gray[x:x+w, y:y+h]
-            face = gray[y:y+w, x:x+h]
+            face = gray[x:x+w, y:y+h]
+            # face = gray[y:y+w, x:x+h]
             self.faces.append(face)
             self.labels.append(label)
             self.face_recognizer.train(self.faces, np.array(self.labels))
@@ -33,8 +33,8 @@ class FacialRecog(object):
 
     def predict(self, face, gray):
         (x, y, w, h) = face
-        # test_face = gray[x:x+w, y:y+h]
-        test_face = gray[y:y+w, x:x+h]
+        test_face = gray[x:x+w, y:y+h]
+        # test_face = gray[y:y+w, x:x+h]
         label, confidence = self.face_recognizer.predict(test_face)
         return label, confidence
 
@@ -58,7 +58,7 @@ class FacialRecog(object):
 if __name__ == '__main__':
     facial_recognition = FacialRecog()
     img_michael = cv2.imread('michael.jpg')
-    img_meimei = cv2.imread('meimei.jpg')
+    img_meimei = cv2.imread('meimei2.jpg')
     facial_recognition.add_new('Michael', img_michael)
     facial_recognition.add_new('Mei Mei', img_meimei)
     video_capture = cv2.VideoCapture(0)
