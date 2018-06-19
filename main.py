@@ -1,6 +1,7 @@
 from FacialRecog import FacialRecog
 from Guide import Guide
 from Bot import Bot
+from Kiosk import Kiosk
 import cv2
 
 
@@ -13,7 +14,8 @@ def main():
 
 
 if __name__ == '__main__':
-    guest_info = {}
+    kiosk = Kiosk()
+    guest_info = kiosk.get_guest_info()
     host = ''
     port = 0
     password = ''

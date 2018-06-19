@@ -51,6 +51,7 @@ class Bot(object):
         return self.cmd(command)
 
     def display(self, to_display):
+        print('Displaying guest info: %s' % to_display)
         return True
 
     def wait_til(self, check_method, args=None, reference_value=True):
