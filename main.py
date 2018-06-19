@@ -1,6 +1,7 @@
 from FacialRecog import FacialRecog
 from Guide import Guide
 from Bot import Bot
+import cv2
 
 
 def main():
@@ -12,12 +13,12 @@ def main():
 
 
 if __name__ == '__main__':
-    facial_data = None
     guest_info = {}
     host = ''
     port = 0
     password = ''
     bot = Bot(host, port, password)
-    face = FacialRecog(facial_data)
+    face = FacialRecog()
+    face.add_new('Michael', cv2.imread('michael2.jpg'))
     guide = Guide(face, guest_info, bot)
     main()
