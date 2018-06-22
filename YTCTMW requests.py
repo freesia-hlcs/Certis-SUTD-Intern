@@ -104,7 +104,7 @@ class Yitu(object):
         send = requests.get(self.URL + "/fr/masterdata?category={}&building={}".format(category, building))
         return send
 
-    def delconfig(self, identity, category, building):
+    def delmasterdata(self, identity, category, building):
         #Remove all photo records given person's identity, category and building
         send = requests.delete(self.URL + "/fr/masterdata?identity={}&category={}&building={}".format(identity, category, building))
         return send
