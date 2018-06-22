@@ -54,3 +54,7 @@ class Kiosk(object):
             # return name, venue, pic
             name, venue = self.parse_json(new_json)
             return name, venue
+
+    def get_guest_pic(self):
+        img = 'michael2.jpg'
+        return img

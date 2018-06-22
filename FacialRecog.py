@@ -27,6 +27,13 @@ phase_train_placeholder = tf.get_default_graph().get_tensor_by_name("phase_train
 embedding_size = embeddings.get_shape()[1]
 
 
+def getEmbedding(resized):
+    reshaped = resized.reshape(-1, input_image_size, input_image_size, 3)
+    feed_dict = {images_placeholder: reshaped, phase_train_placeholder: False}
+    embedding = sess.run(embeddings, feed_dict=feed_dict)
+    return embedding
+
+
 def getFace(img):
     faces = []
     img_size = np.asarray(img.shape)[0:2]
@@ -51,16 +58,7 @@ def getFace(img):
     return faces
 
 
-def getEmbedding(resized):
-    reshaped = resized.reshape(-1, input_image_size, input_image_size, 3)
-    feed_dict = {images_placeholder: reshaped, phase_train_placeholder: False}
-    embedding = sess.run(embeddings, feed_dict=feed_dict)
-    return embedding
-
-
 def compare2face(face1, face2):
-    # face1 = getFace(img1)
-    # face2 = getFace(img2)
     if face1 and face2:
         # calculate Euclidean distance
         dist = np.sqrt(np.sum(np.square(np.subtract(face1['embedding'], face2['embedding']))))
@@ -76,16 +74,26 @@ def identify(face, face_dic):
         if dist <= max_dist and dist <= best_dist:
             best_name = name
             best_dist = dist
-    return best_name, best_dist
+    return best_name, best_dist if best_dist != 100 else -1
 
 
-# if __name__ == '__main__':
-#     img1 = cv2.imread(args.img1)
-#     img2 = cv2.imread(args.img2)
-#     distance = compare2face(img1, img2)
-#     threshold = 1.10  # set yourself to meet your requirement
-#     print("distance = " + str(distance))
-#     print("Result = " + ("same person" if distance <= threshold else "not same person"))
+def get_position(face):
+    x = face['rect'][0]
+    size = 0.5*(face['rect'][2]-face['rect'][0]+face['rect'][3]-face['rect'][1])
+    r = 0.25*size
+    theta = (x-200)*0.25
+    return r, theta
+
+
+def find_face(test_face, img):
+    max_dist = 0.75
+    faces = getFace(img)
+    for face in faces:
+        dist = compare2face(test_face, face)
+        if dist < max_dist and dist != -1:
+            return True
+    return False
+
 
 if __name__ == '__main__':
     video_capture = cv2.VideoCapture(0)
@@ -112,6 +120,7 @@ if __name__ == '__main__':
                 text = name + ' %.4f' % dist
                 cv2.putText(new_frame, text, (face['rect'][0], face['rect'][1]), cv2.FONT_HERSHEY_PLAIN, 1.5,
                             (0, 255, 0), 2)
+                print(get_position(face))
         cv2.imshow('Video', new_frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
