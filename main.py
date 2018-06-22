@@ -5,6 +5,7 @@ from Lift import Lift
 from Kiosk import Kiosk
 import cv2
 from time import sleep
+import threading
 
 
 def get_guest_info(kiosk):
@@ -29,8 +30,8 @@ def guide(guest_info):
     bot.display(face)
     found = False
     video_capture = cv2.VideoCapture(0)
+    bot.patrol('lobby')
     while not found:
-        bot.patrol('lobby')
         ret, frame = video_capture.read()
         found = find_face(face, frame)
         sleep(0.2)
@@ -53,6 +54,12 @@ def guide(guest_info):
     bot.go_to('venue_lift')
     bot.go_to(venue['room'])
     print('Going to %s' % venue)
+    reached = False
+    while not reached:
+        reached = bot.check_reached(venue)
+        sleep(0.2)
+    bot.stop()
+    print('Reached goal')
 
 
 if __name__ == '__main__':
