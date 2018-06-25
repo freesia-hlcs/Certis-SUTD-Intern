@@ -1,5 +1,4 @@
 from FacialRecog import FacialRecog
-from Guide import Guide
 from Bot import Bot
 from Lift import Lift
 from Kiosk import Kiosk
