@@ -61,6 +61,7 @@ def main(guest_info):
     global bot
     global lift
     global activated
+    global speech
     while not activated:
         sleep(0.5)
     name = guest_info['name']
@@ -112,6 +113,7 @@ def main(guest_info):
     print('Reached goal')
     sleep(1)
     print('Informing host that guest has arrived')
+    speech.order_drink()
     activated = False
 
 
@@ -130,6 +132,8 @@ def get_kiosk():
 
 
 def convo():
+    # global speech
+    # speech.common_talk()
     pass
 
 
@@ -139,6 +143,7 @@ if __name__ == '__main__':
     lift = Lift()
     kiosk = Kiosk()
     facial_recog = FacialRecog()
+    speech = speech()
     guest_info = {'name': 'Michael',
                   'venue': {'name': 'EBC', 'level': 7},
                   'face': cv2.imread('michael2.jpg')}

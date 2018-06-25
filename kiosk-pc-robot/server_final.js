@@ -115,7 +115,9 @@ apiRoutes.post('/save', async function(req, res) {
 
 
 	
-	res.json({host_name ,host_email ,meeting_venue ,visitor_name,visitor_picture});
+	res.json({message:"You have posted " + visitor_name + "'s information."
+		
+	});
 });
 
 // apply the routes to our application with the prefix /api
