@@ -129,7 +129,7 @@ def get_kiosk():
         get_kiosk()
 
 
-def speech():
+def convo():
     pass
 
 
@@ -146,7 +146,7 @@ if __name__ == '__main__':
     activated = False
     t_kiosk = threading.Thread(target=get_kiosk, args=())
     t_guide = threading.Thread(target=main, args=(guest_info,))
-    t_speech = threading.Thread(target=speech, args=())
+    t_speech = threading.Thread(target=convo, args=())
     t_kiosk.start()
     t_guide.start()
     t_speech.start()
