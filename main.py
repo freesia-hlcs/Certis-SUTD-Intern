@@ -25,25 +25,35 @@ def guide(name, current_position, destination):
     print('Guiding to %s' % destination)
     global bot
     global facial_recog
-    # bot.go_to(destination)
+    # bot.patrol(current_position)
     video_capture = cv2.VideoCapture(0)
     reached = False
+    state = 'no face'
     i = 0
     while not reached:
         ret, frame = video_capture.read()
-        if not facial_recog.find_face(name, frame):
-            i = 0
-            print('guest lost')
-            # bot.stop()
-            # bot.patrol(current_position)
-        else:
-            print('leading guest')
-            i += 1
-            if i > 10:
-                reached = True
-            # bot.stop()
-            # bot.go_to(destination)
-            # reached = bot.check_reached(destination)
+        if state == 'no face':
+            face = facial_recog.find_face(name, frame)
+            if face:
+                print('face found')
+                state = 'face'
+                # bot.stop()
+                # bot.go_to(destination)
+            else:
+                print('guest lost')
+        elif state == 'face':
+            face = facial_recog.find_face(name, frame)
+            if not face:
+                print('face lost')
+                i = 0
+                state = 'no face'
+                # bot.stop()
+                # bot.patrol(current_position)
+            else:
+                print('leading guest')
+                i += 1
+                if i > 10:
+                    reached = True
         sleep(0.2)
     video_capture.release()
 
