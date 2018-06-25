@@ -67,4 +67,15 @@ if __name__ == '__main__':
     bot = Bot('192.168.0.250', 7171, 'adept')
     lift = Lift()
     kiosk = Kiosk()
-    facial_recog = FacialRecog()
+    img_dic = {
+        'Michael': cv2.imread('michael2.jpg'),
+        'Mei Mei': cv2.imread('meimei2.jpg'),
+        'Xinran': cv2.imread('xinran.jpg'),
+        'Wang Cheng': cv2.imread('wangcheng.jpg')
+    }
+    facial_recog = FacialRecog(img_dic)
+    guest_info = {
+        'name': 'Michael',
+        'venue': 'EBC',
+        'face': cv2.imread('michael2.jpg')
+    }
