@@ -33,7 +33,7 @@ def guide(guest_info):
     found = False
     video_capture = cv2.VideoCapture(0)
     # bot.patrol('lobby')
-    print('Patroling lobby')
+    print('Patrolling lobby')
     for i in range(10):
     # while not found:
         ret, frame = video_capture.read()
