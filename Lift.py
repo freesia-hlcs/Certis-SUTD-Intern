@@ -16,5 +16,5 @@ class Lift(object):
         return True
 
     def go_to_level(self, to_level):
-        print('Going to level %d' % to_level)
+        print('Going to level %s' % str(to_level))
         return True

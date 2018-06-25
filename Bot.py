@@ -5,11 +5,12 @@ from time import sleep
 class Bot(object):
 
     def __init__(self, host, port, password):
-        self.s = socket.socket()
-        self.s.connect((host, port))
-        password += '\r\n'
-        password_b = password.encode('utf8')
-        self.s.send(password_b)
+        # self.s = socket.socket()
+        # self.s.connect((host, port))
+        # password += '\r\n'
+        # password_b = password.encode('utf8')
+        # self.s.send(password_b)
+        print('connecting to the bot')
 
     def receive(self, buffer_size=4096):
         msg_b = self.s.recv(buffer_size)

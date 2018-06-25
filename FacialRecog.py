@@ -96,7 +96,7 @@ class FacialRecog(object):
         faces = self.get_face(img)
         for face in faces:
             dist = self.compare2face(test_face, face)
-            if dist < self.max_dist and dist != -1:
+            if dist <= self.max_dist and dist != -1:
                 return True
         return False
 

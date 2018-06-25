@@ -28,38 +28,45 @@ def guide(guest_info):
     venue = guest_info['venue']
     face = guest_info['face']
     print('Guiding %s to %s' % (name, venue))
-    bot.display(face)
+    # bot.display(face)
+    print('Displaying guest info')
     found = False
     video_capture = cv2.VideoCapture(0)
-    bot.patrol('lobby')
-    while not found:
+    # bot.patrol('lobby')
+    print('Patroling lobby')
+    for i in range(10):
+    # while not found:
         ret, frame = video_capture.read()
-        found = facial_recog.find_face(face, frame)
+        found = facial_recog.find_face(name, frame)
         sleep(0.2)
-    bot.stop()
+    # bot.stop()
     video_capture.release()
     print('Guest found')
-    bot.go_to('lobby_lift')
+    # bot.go_to('lobby_lift')
+    print('Going to lobby lift')
     lift.call_lift(1)
     lift.open_door()
     print('Waiting for guest to go in')
-    bot.go_to('lift_1')
+    # bot.go_to('lift_1')
+    print('Going into lift')
     sleep(5)
     lift.close_door()
     lift.go_to_level(venue['level'])
-    bot.go_to_level(venue['level'])
+    # bot.go_to_level(venue['level'])
     lift.open_door()
     print('Waiting for guest to go out')
     sleep(5)
     lift.close_door()
-    bot.go_to('venue_lift')
-    bot.go_to(venue['room'])
+    # bot.go_to('venue_lift')
+    # bot.go_to(venue['room'])
+    print('Going out of lift')
     print('Going to %s' % venue)
     reached = False
-    while not reached:
-        reached = bot.check_reached(venue)
+    for i in range(10):
+    # while not reached:
+    #     reached = bot.check_reached(venue)
         sleep(0.2)
-    bot.stop()
+    # bot.stop()
     print('Reached goal')
 
 
@@ -67,15 +74,11 @@ if __name__ == '__main__':
     bot = Bot('192.168.0.250', 7171, 'adept')
     lift = Lift()
     kiosk = Kiosk()
-    img_dic = {
-        'Michael': cv2.imread('michael2.jpg'),
-        'Mei Mei': cv2.imread('meimei2.jpg'),
-        'Xinran': cv2.imread('xinran.jpg'),
-        'Wang Cheng': cv2.imread('wangcheng.jpg')
-    }
-    facial_recog = FacialRecog(img_dic)
+    facial_recog = FacialRecog()
     guest_info = {
         'name': 'Michael',
-        'venue': 'EBC',
+        'venue': {'name': 'EBC', 'level': 7},
         'face': cv2.imread('michael2.jpg')
     }
+    facial_recog.add_face(guest_info['name'], guest_info['face'])
+    guide(guest_info)
