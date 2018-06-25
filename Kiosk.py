@@ -1,3 +1,5 @@
+import time
+import socket
 import json
 import os
 
@@ -7,8 +9,8 @@ class Kiosk(object):
     def __init__(self):
         self.path = os.getcwd()
         self.path.replace('\\', '/')
-        self.record_file = 'Record.txt'
-        self.file_path = os.getcwd() + '/files/'
+        self.record_file = os.getcwd()+'/kiosk-pc-robot/'+'record.txt'
+        self.file_path = os.getcwd() + '/kiosk-pc-robot/'+'/files/'
 
     def insert_into_list(self, new_json):
         fp = open(self.record_file)
@@ -45,16 +47,19 @@ class Kiosk(object):
         json_list = [i for i in os.listdir(self.file_path) if i.endswith('.json')]
         pic_list = [i for i in os.listdir(self.file_path) if i.endswith('.png')]
         new_json = list(i for i in json_list if i not in json_list_processed)  # Pick our the new json file received.
+        
         if len(new_json) != 0:  # If there is new json received.
             new_json = new_json[0]  # Currently we just suppose that each checking loop, there will be at most one json file received.
             # read_json(new_json)
-            print(json_list_processed, json_list, new_json)
+            print(new_json)
             self.insert_into_list(new_json)  # Insert the new file name to the firts line in json file
             # name, venue, pic = self.parse_json(new_json)
             # return name, venue, pic
             name, venue = self.parse_json(new_json)
-            return name, venue
+            #return name, venue
 
-    def get_guest_pic(self):
-        img = 'michael2.jpg'
-        return img
+a=Kiosk()
+while True:
+    
+    a.get_guest_info()
+    

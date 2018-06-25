@@ -1,4 +1,27 @@
 # -*- coding: utf-8 -*-
+
+
+'''
+    def alertblacklist(self):
+        #To provide blacklisted person detected and unidentified person detected.  
+        #Alert to be provided immediately after the detection.
+        send = requests.get("http://192.168.225.88:80/fr/alert/")
+        return send
+    
+    def alertebc(self):
+        #To provide the person or group of person (as a list) detected in front 
+        #of the command-centre entrance door immediately after detection. 
+        #If uncategorized, just return the person as unidentified.
+        send = requests.get("http://192.168.225.88/fr/ebc/")
+        return send
+    
+    def alertdetection(self):
+        #To provide any person detection.  Alert to be provided immediately 
+        #after the detection.
+        send = requests.get("http://192.168.225.88:80/fr/detection/")
+        return send
+'''
+
 from pprint import pprint
 import base64
 import json
@@ -38,48 +61,55 @@ class Yitu(object):
     def send(self, request): 
         #custom request in the form of "/fr/??"
         send = requests.get(self.URL + request)
+        
         return send
-    
+
+    #Return string    
     def ping(self): 
         #Get status of middleware
         send = requests.get(self.URL + "/fr/ping")
-        return send
-  
+        return send.text
+
+    #Return json  
     def config(self): 
         #Get configuration of middleware
         send = requests.get(self.URL + "/fr/config")
-        return send
+        return send.json()
 
-    def tracking(self, identity, building=all, begintime=None, endtime=None): 
+    #Return json
+    def tracking(self, identity, building="all", begintime=None, endtime=None): 
         #identity (compulsory), building (all or commonwealth), begintime (yyyymmdd_hhmmss), endtime (yyyymmdd_hhmmss)
         #Get alerts given person's identity. Filter by building, begintime, endtime
         URL = self.URL + "/fr/tracking?identity=" + identity
         
-        if building != None:
+        if building==None:
+            URL += '&building=all'
+        else:
             URL += '&building=' + building
         if begintime != None:
             URL += '&begintime=' + begintime
         if endtime != None:
             URL += '&endtime=' + endtime
         send = requests.get(URL)
-        return send
+        return send.json()
 
-    def lastseen(self, identity, building=None, begintime=None, endtime=None):
+    #Return json
+    def lastseen(self, identity, building="all", begintime=None, endtime=None):
         # Print last seen info camera, building, date and time
         # result[0] = cameraid
         # result[1] = building
         # result[2] = [date, time]
         
-        log = self.tracking(identity, building, begintime, endtime)
-        logjson = log.json()
+        log = self.tracking(identity=identity, building=building, begintime=begintime, endtime=endtime)
         
-        Camera = logjson[0]['cameraid']  
-        Building = logjson[0]['building']
-        Time = logjson[0]['timestamp'].split('T')
+        Camera = log[0]['cameraid']  
+        Building = log[0]['building']
+        Time = log[0]['timestamp'].split('T')
         
         return Camera, Building, Time
-        
-    def logdetection(self, category=None, building=None, begintime=None, endtime=None):
+
+    #Return json        
+    def logdetection	(self, category=None, building=None, begintime=None, endtime=None):
         #category (employee, visitor, blacklist, unidentified, all), building (all or commonwealth), begintime (yyyymmdd_hhmmss), endtime (yyyymmdd_hhmmss)
         #Get all alerts. Filter by building, category, begintime, endtime
         URL = self.URL + "/fr/logdetection?"
@@ -90,6 +120,11 @@ class Yitu(object):
                 URL += 'building=' + building
             else:
                 URL += '&building=' + building
+        else:
+            if building == None and category == None:
+                URL += 'building=' + "all"
+            else:
+                URL += '&building=' + "all"            
         if begintime != None:
             if begintime != None and category == None and building == None:
                 URL += 'begintime=' + begintime
@@ -101,7 +136,7 @@ class Yitu(object):
             else:
                 URL += '&endtime=' + endtime        
         send = requests.get(URL)
-        return send
+        return send.json() 
 
     def addmaster(self, identity, category, image, building=None, name=None):
         #Add a photo record given person's name, identity, image, category, building.
@@ -124,36 +159,9 @@ class Yitu(object):
         send = requests.delete(self.URL + "/fr/masterdata?identity={}&category={}&building={}".format(identity, category, building))
         return send
 
-'''
-    def alertblacklist(self):
-        #To provide blacklisted person detected and unidentified person detected.  
-        #Alert to be provided immediately after the detection.
-        send = requests.get("http://192.168.225.88:80/fr/alert/")
-        return send
-    
-    def alertebc(self):
-        #To provide the person or group of person (as a list) detected in front 
-        #of the command-centre entrance door immediately after detection. 
-        #If uncategorized, just return the person as unidentified.
-        send = requests.get("http://192.168.225.88/fr/ebc/")
-        return send
-    
-    def alertdetection(self):
-        #To provide any person detection.  Alert to be provided immediately 
-        #after the detection.
-        send = requests.get("http://192.168.225.88:80/fr/detection/")
-        return send
-'''
 
+#Y = Yitu(IP, Port)
 
-Y = Yitu(IP, Port)
-r = Y.config()
-rt = r.text # Output as string
-rs = r.json() # Output a json as dictionary
-#pprint(rs)
-#print(rt)
-#print(json.dumps(rs, indent = 4))
-
-last=Y.lastseen(identity="S8437449J", begintime="20180622_080000", endtime="20180625_080000")
-print(last)
+#last=Y.lastseen(identity="S8437449J", begintime="20180622_080000", endtime="20180625_080000")
+#print(last)
 
