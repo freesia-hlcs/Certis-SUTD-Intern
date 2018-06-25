@@ -21,7 +21,33 @@ def get_guest_info(kiosk):
     return guest_info
 
 
-def guide(guest_info):
+def guide(name, current_position, destination):
+    print('Guiding to %s' % destination)
+    global bot
+    global facial_recog
+    # bot.go_to(destination)
+    video_capture = cv2.VideoCapture(0)
+    reached = False
+    i = 0
+    while not reached:
+        ret, frame = video_capture.read()
+        if not facial_recog.find_face(name, frame):
+            print('guest lost')
+            # bot.stop()
+            # bot.patrol(current_position)
+        else:
+            print('leading guest')
+            i += 1
+            if i > 10:
+                reached = True
+            # bot.stop()
+            # bot.go_to(destination)
+            # reached = bot.check_reached(destination)
+        sleep(0.2)
+    video_capture.release()
+
+
+def main(guest_info):
     global bot
     global lift
     name = guest_info['name']
@@ -44,8 +70,7 @@ def guide(guest_info):
     video_capture.release()
     print('Guest found')
     print('Informing host that guest is currently on the way')
-    # bot.go_to('lobby_lift')
-    print('Going to lobby lift')
+    guide(name, 'lobby', 'lobby lift')
     lift.call_lift(1)
     lift.open_door()
     print('Waiting for guest to go in')
@@ -63,11 +88,7 @@ def guide(guest_info):
     # bot.go_to(venue['room'])
     print('Going out of lift')
     print('Going to %s' % venue)
-    reached = False
-    for i in range(10):
-    # while not reached:
-    #     reached = bot.check_reached(venue)
-        sleep(0.2)
+    guide(name, venue, venue)
     # bot.stop()
     print('Reached goal')
     print('Informing host that guest has arrived')
@@ -85,4 +106,4 @@ if __name__ == '__main__':
         'face': cv2.imread('michael2.jpg')
     }
     facial_recog.add_face(guest_info['name'], guest_info['face'])
-    guide(guest_info)
+    main(guest_info)
