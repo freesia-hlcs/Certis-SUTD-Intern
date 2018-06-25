@@ -1,4 +1,4 @@
-from FacialRecog import *
+from FacialRecog import FacialRecog
 # from Guide import Guide
 from Bot import Bot
 from Lift import Lift
@@ -9,13 +9,14 @@ import threading
 
 
 def get_guest_info(kiosk):
+    global facial_recog
     print('Getting guest info')
     name, venue = kiosk.get_guest_info()
     face_pic = kiosk.get_guest_pic()
     guest_info = {
         'name': name,
         'venue': venue,
-        'face': getFace(face_pic)[0]
+        'face': facial_recog.get_face(face_pic)[0]
     }
     return guest_info
 
@@ -33,7 +34,7 @@ def guide(guest_info):
     bot.patrol('lobby')
     while not found:
         ret, frame = video_capture.read()
-        found = find_face(face, frame)
+        found = facial_recog.find_face(face, frame)
         sleep(0.2)
     bot.stop()
     video_capture.release()
@@ -66,3 +67,4 @@ if __name__ == '__main__':
     bot = Bot('192.168.0.250', 7171, 'adept')
     lift = Lift()
     kiosk = Kiosk()
+    facial_recog = FacialRecog()
