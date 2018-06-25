@@ -43,6 +43,7 @@ def guide(guest_info):
     # bot.stop()
     video_capture.release()
     print('Guest found')
+    print('Informing host that guest is currently on the way')
     # bot.go_to('lobby_lift')
     print('Going to lobby lift')
     lift.call_lift(1)
@@ -69,10 +70,12 @@ def guide(guest_info):
         sleep(0.2)
     # bot.stop()
     print('Reached goal')
+    print('Informing host that guest has arrived')
 
 
 if __name__ == '__main__':
-    bot = Bot('192.168.0.250', 7171, 'adept')
+    # bot = Bot('192.168.0.250', 7171, 'adept')
+    print('connecting to bot')
     lift = Lift()
     kiosk = Kiosk()
     facial_recog = FacialRecog()

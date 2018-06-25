@@ -50,7 +50,7 @@ class Yitu(object):
         send = requests.get(self.URL + "/fr/config")
         return send
 
-    def tracking(self, identity, building=None, begintime=None, endtime=None): 
+    def tracking(self, identity, building=all, begintime=None, endtime=None): 
         #identity (compulsory), building (all or commonwealth), begintime (yyyymmdd_hhmmss), endtime (yyyymmdd_hhmmss)
         #Get alerts given person's identity. Filter by building, begintime, endtime
         URL = self.URL + "/fr/tracking?identity=" + identity
@@ -58,13 +58,28 @@ class Yitu(object):
         if building != None:
             URL += '&building=' + building
         if begintime != None:
-            URL += '&begintime=' + building
+            URL += '&begintime=' + begintime
         if endtime != None:
-            URL += '&endtime=' + building
+            URL += '&endtime=' + endtime
         send = requests.get(URL)
         return send
 
-    def logdetection	(self, category=None, building=None, begintime=None, endtime=None):
+    def lastseen(self, identity, building=None, begintime=None, endtime=None):
+        # Print last seen info camera, building, date and time
+        # result[0] = cameraid
+        # result[1] = building
+        # result[2] = [date, time]
+        
+        log = self.tracking(identity, building, begintime, endtime)
+        logjson = log.json()
+        
+        Camera = logjson[0]['cameraid']  
+        Building = logjson[0]['building']
+        Time = logjson[0]['timestamp'].split('T')
+        
+        return Camera, Building, Time
+        
+    def logdetection(self, category=None, building=None, begintime=None, endtime=None):
         #category (employee, visitor, blacklist, unidentified, all), building (all or commonwealth), begintime (yyyymmdd_hhmmss), endtime (yyyymmdd_hhmmss)
         #Get all alerts. Filter by building, category, begintime, endtime
         URL = self.URL + "/fr/logdetection?"
@@ -136,13 +151,9 @@ r = Y.config()
 rt = r.text # Output as string
 rs = r.json() # Output a json as dictionary
 #pprint(rs)
-print(rt)
-print(json.dumps(rs, indent = 4))
+#print(rt)
+#print(json.dumps(rs, indent = 4))
 
-
-
-
-
-
-
+last=Y.lastseen(identity="S8437449J", begintime="20180622_080000", endtime="20180625_080000")
+print(last)
 
