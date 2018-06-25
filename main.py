@@ -55,15 +55,15 @@ def main(guest_info):
     venue = guest_info['venue']
     face = guest_info['face']
     print('Guiding %s to %s' % (name, venue))
-    sleep(0.2)
+    sleep(1)
     # bot.display(face)
     print('Displaying guest info')
-    sleep(0.2)
+    sleep(1)
     found = False
     video_capture = cv2.VideoCapture(0)
     # bot.patrol('lobby')
     print('Patrolling lobby')
-    sleep(0.2)
+    sleep(1)
     # for i in range(10):
     while not found:
         print('Looking for face')
@@ -73,14 +73,14 @@ def main(guest_info):
     # bot.stop()
     video_capture.release()
     print('Guest found')
-    sleep(0.2)
+    sleep(1)
     print('Informing host that guest is currently on the way')
-    sleep(0.2)
+    sleep(1)
     guide(name, 'lobby', 'lobby lift')
     lift.call_lift(1)
     lift.open_door()
     print('Waiting for guest to go in')
-    sleep(0.2)
+    sleep(1)
     # bot.go_to('lift_1')
     print('Going into lift')
     sleep(5)
@@ -94,11 +94,11 @@ def main(guest_info):
     # bot.go_to('venue_lift')
     # bot.go_to(venue['room'])
     print('Going out of lift')
-    sleep(0.2)
+    sleep(1)
     guide(name, venue, venue)
     # bot.stop()
     print('Reached goal')
-    sleep(0.2)
+    sleep(1)
     print('Informing host that guest has arrived')
 
 
