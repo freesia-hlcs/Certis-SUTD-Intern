@@ -1,5 +1,5 @@
 from FacialRecog import FacialRecog
-# from Guide import Guide
+from Guide import Guide
 from Bot import Bot
 from Lift import Lift
 from Kiosk import Kiosk
@@ -32,6 +32,7 @@ def guide(name, current_position, destination):
     while not reached:
         ret, frame = video_capture.read()
         if not facial_recog.find_face(name, frame):
+            i = 0
             print('guest lost')
             # bot.stop()
             # bot.patrol(current_position)

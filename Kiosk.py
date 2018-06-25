@@ -58,8 +58,9 @@ class Kiosk(object):
             name, venue = self.parse_json(new_json)
             #return name, venue
 
-a=Kiosk()
-while True:
-    
-    a.get_guest_info()
-    
+
+if __name__ == '__main__':
+    a=Kiosk()
+    while True:
+
+        a.get_guest_info()
