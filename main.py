@@ -12,11 +12,9 @@ def get_guest_info(kiosk):
     print('Getting guest info')
     name, venue = kiosk.get_guest_info()
     face_pic = kiosk.get_guest_pic()
-    guest_info = {
-        'name': name,
-        'venue': venue,
-        'face': facial_recog.get_face(face_pic)[0]
-    }
+    guest_info = {'name': name,
+                  'venue': venue,
+                  'face': facial_recog.get_face(face_pic)[0]}
     return guest_info
 
 
@@ -117,10 +115,8 @@ if __name__ == '__main__':
     lift = Lift()
     kiosk = Kiosk()
     facial_recog = FacialRecog()
-    guest_info = {
-        'name': 'Michael',
-        'venue': {'name': 'EBC', 'level': 7},
-        'face': cv2.imread('michael2.jpg')
-    }
+    guest_info = {'name': 'Michael',
+                  'venue': {'name': 'EBC', 'level': 7},
+                  'face': cv2.imread('michael2.jpg')}
     facial_recog.add_face(guest_info['name'], guest_info['face'])
     main(guest_info)
