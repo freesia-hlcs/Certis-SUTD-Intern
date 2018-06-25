@@ -34,8 +34,9 @@ def guide(guest_info):
     video_capture = cv2.VideoCapture(0)
     # bot.patrol('lobby')
     print('Patrolling lobby')
-    for i in range(10):
-    # while not found:
+    # for i in range(10):
+    while not found:
+        print('Looking for face')
         ret, frame = video_capture.read()
         found = facial_recog.find_face(name, frame)
         sleep(0.2)
