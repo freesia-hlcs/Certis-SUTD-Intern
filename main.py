@@ -2,13 +2,15 @@ from FacialRecog import FacialRecog
 from Bot import Bot
 from Lift import Lift
 from Kiosk import Kiosk
+from Speech import *
 import cv2
 from time import sleep
 import threading
 
 
-def get_guest_info(kiosk):
+def get_guest_info():
     global facial_recog
+    global kiosk
     print('Getting guest info')
     name, venue = kiosk.get_guest_info()
     face_pic = kiosk.get_guest_pic()
@@ -25,25 +27,25 @@ def guide(name, current_position, destination):
     # bot.patrol(current_position)
     video_capture = cv2.VideoCapture(0)
     reached = False
-    state = 'no face'
+    state = 'face lost'
     i = 0
     while not reached:
         ret, frame = video_capture.read()
-        if state == 'no face':
+        if state == 'face lost':
             face = facial_recog.find_face(name, frame)
             if face:
                 print('face found')
-                state = 'face'
+                state = 'face found'
                 # bot.stop()
                 # bot.go_to(destination)
             else:
                 print('guest lost')
-        elif state == 'face':
+        elif state == 'face found':
             face = facial_recog.find_face(name, frame)
             if not face:
                 print('face lost')
                 i = 0
-                state = 'no face'
+                state = 'face lost'
                 # bot.stop()
                 # bot.patrol(current_position)
             else:
@@ -58,6 +60,9 @@ def guide(name, current_position, destination):
 def main(guest_info):
     global bot
     global lift
+    global activated
+    while not activated:
+        sleep(0.5)
     name = guest_info['name']
     venue = guest_info['venue']
     face = guest_info['face']
@@ -107,6 +112,25 @@ def main(guest_info):
     print('Reached goal')
     sleep(1)
     print('Informing host that guest has arrived')
+    activated = False
+
+
+def get_kiosk():
+    global guest_info
+    global activated
+    # while True:
+    #     guest_info = get_guest_info()
+    #     if guest_info:
+    #         activated = True
+    guest = input('Is guest here? ')
+    if guest == 'y':
+        activated = True
+    else:
+        get_kiosk()
+
+
+def speech():
+    pass
 
 
 if __name__ == '__main__':
@@ -119,4 +143,13 @@ if __name__ == '__main__':
                   'venue': {'name': 'EBC', 'level': 7},
                   'face': cv2.imread('michael2.jpg')}
     facial_recog.add_face(guest_info['name'], guest_info['face'])
-    main(guest_info)
+    activated = False
+    t_kiosk = threading.Thread(target=get_kiosk, args=())
+    t_guide = threading.Thread(target=main, args=(guest_info,))
+    t_speech = threading.Thread(target=speech, args=())
+    t_kiosk.start()
+    t_guide.start()
+    t_speech.start()
+    t_kiosk.join()
+    t_guide.join()
+    t_speech.join()
