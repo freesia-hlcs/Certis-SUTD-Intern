@@ -146,6 +146,7 @@ def send():
     global bot
     while True:
         to_send = input('Enter command:\n')
+        print('Sending to bot: ' + to_send)
         # bot.cmd(to_send)
 
 
