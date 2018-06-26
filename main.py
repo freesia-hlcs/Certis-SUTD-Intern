@@ -148,7 +148,7 @@ if __name__ == '__main__':
     lift = Lift()
     kiosk = Kiosk()
     facial_recog = FacialRecog()
-    speech = speech()
+    speech = Speech()
     guest_info = {'name': 'Michael',
                   'venue': {'name': 'EBC', 'level': 7},
                   'face': cv2.imread('michael2.jpg')}

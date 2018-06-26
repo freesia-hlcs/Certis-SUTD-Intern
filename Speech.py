@@ -19,7 +19,7 @@ def say(words):
     print('Robot Say: ' + words)  # Represent robot 'say' function
 
 
-class speech():
+class Speech():
     def __init__(self):
         self.interrupt_intents = ['GoWashroom']  # List of interruption events. Now it only contains goWashroom.
 
@@ -76,7 +76,7 @@ class speech():
 
 
 if __name__ == '__main__':
-    test = speech()
+    test = Speech()
     say('Welcome to Certis CISCO Security! This is the meeting place.')
     test.order_drink()
     test.common_talk()
