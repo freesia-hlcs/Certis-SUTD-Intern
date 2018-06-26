@@ -51,7 +51,7 @@ def guide(name, current_position, destination):
             else:
                 print('leading guest')
                 i += 1
-                if i > 10:
+                if i > 5:
                     reached = True
         sleep(0.2)
     video_capture.release()
@@ -61,7 +61,7 @@ def main(guest_info):
     global bot
     global lift
     global activated
-    global speech
+    global test_speech
     while not activated:
         sleep(0.5)
     name = guest_info['name']
@@ -113,7 +113,7 @@ def main(guest_info):
     print('Reached goal')
     sleep(1)
     print('Informing host that guest has arrived')
-    speech.order_drink()
+    test_speech.order_drink()
     activated = False
 
 
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     lift = Lift()
     kiosk = Kiosk()
     facial_recog = FacialRecog()
-    speech = speech()
+    test_speech = speech()
     guest_info = {'name': 'Michael',
                   'venue': {'name': 'EBC', 'level': 7},
                   'face': cv2.imread('michael2.jpg')}
