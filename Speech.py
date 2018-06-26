@@ -21,7 +21,7 @@ def say(words):
 
 class speech():
     def __init__(self):
-        self.interrupt_intents = ['GoWashroom']  # List of interruption events. Now it only ocntanins goWashroom.
+        self.interrupt_intents = ['GoWashroom']  # List of interruption events. Now it only contains goWashroom.
 
     def listen(self):
         '''Record when the user is speaking and convert the speech audio file to text using Google voice recognition'''
@@ -53,8 +53,9 @@ class speech():
         response = dict['result']['fulfillment']['speech']
         say(response)
 
-        intent = dict['result']["metadata"]["intentName"]
-        self.event_check(intent)
+        if dict['result']["metadata"] != {}:  # Being empty means that now the talk intent belongs to common talk
+            intent = dict['result']["metadata"]["intentName"]
+            self.event_check(intent)
 
     def event_check(self, intent):
         if intent == 'GoWashroom':
@@ -76,6 +77,6 @@ class speech():
 
 if __name__ == '__main__':
     test = speech()
-    say('Welcome to Certis CSCIO Security! This is the meeting place.')
+    say('Welcome to Certis CISCO Security! This is the meeting place.')
     test.order_drink()
     test.common_talk()
