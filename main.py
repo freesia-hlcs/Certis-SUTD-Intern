@@ -142,6 +142,13 @@ def convo():
     pass
 
 
+def send():
+    global bot
+    while True:
+        to_send = input('Enter command:\n')
+        # bot.cmd(to_send)
+
+
 if __name__ == '__main__':
     # bot = Bot('192.168.99.131', 7171, 'adept')
     print('connecting to bot')
@@ -157,9 +164,12 @@ if __name__ == '__main__':
     t_kiosk = threading.Thread(target=get_kiosk, args=())
     t_guide = threading.Thread(target=main, args=(guest_info,))
     t_speech = threading.Thread(target=convo, args=())
+    t_send = threading.Thread(target=send, args=())
     t_kiosk.start()
     t_guide.start()
     t_speech.start()
+    t_send.start()
     t_kiosk.join()
     t_guide.join()
     t_speech.join()
+    t_send.join()
