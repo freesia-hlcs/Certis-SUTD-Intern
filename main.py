@@ -31,6 +31,7 @@ def guide(name, current_position, destination):
     i = 0
     while not reached:
         ret, frame = video_capture.read()
+        cv2.imshow('window', frame)
         if state == 'face lost':
             face = facial_recog.find_face(name, frame)
             if face:
@@ -49,19 +50,21 @@ def guide(name, current_position, destination):
                 # bot.stop()
                 # bot.patrol(current_position)
             else:
+                say('Please follow me')
                 print('leading guest')
                 i += 1
                 if i > 5:
                     reached = True
         sleep(0.2)
     video_capture.release()
+    cv2.destroyAllWindows()
 
 
 def main(guest_info):
     global bot
     global lift
     global activated
-    global test_speech
+    global speech
     while not activated:
         sleep(0.5)
     name = guest_info['name']
@@ -86,6 +89,7 @@ def main(guest_info):
     # bot.stop()
     video_capture.release()
     print('Guest found')
+    say('Hello, %s! I am your robot guide for today!' % name)
     sleep(1)
     print('Informing host that guest is currently on the way')
     sleep(1)
@@ -113,7 +117,8 @@ def main(guest_info):
     print('Reached goal')
     sleep(1)
     print('Informing host that guest has arrived')
-    test_speech.order_drink()
+    speech.order_drink()
+    speech.common_talk()
     activated = False
 
 
@@ -132,8 +137,8 @@ def get_kiosk():
 
 
 def convo():
-    # global speech
-    # speech.common_talk()
+    global speech
+    speech.common_talk()
     pass
 
 
@@ -143,7 +148,7 @@ if __name__ == '__main__':
     lift = Lift()
     kiosk = Kiosk()
     facial_recog = FacialRecog()
-    test_speech = speech()
+    speech = speech()
     guest_info = {'name': 'Michael',
                   'venue': {'name': 'EBC', 'level': 7},
                   'face': cv2.imread('michael2.jpg')}
