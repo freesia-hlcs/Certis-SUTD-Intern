@@ -2,7 +2,7 @@ import os.path
 import sys
 import json
 import speech_recognition as sr
-
+import win32com.client
 try:
     import apiai
 except ImportError:
@@ -10,13 +10,16 @@ except ImportError:
         os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir)
     )
 
+
 r = sr.Recognizer()
 CLIENT_ACCESS_TOKEN = '2c087495015448aabb887b153f6e81fd'
 ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
+speaker = win32com.client.Dispatch("SAPI.SpVoice")
 
 
 def say(words):
     print('Robot Say: ' + words)  # Represent robot 'say' function
+    speaker.Speak(words)
 
 
 class Speech():
