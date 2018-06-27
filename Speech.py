@@ -73,7 +73,7 @@ class Speech():
         words = self.listen()
         self.respond_to(words)
         return self.common_talk()
-y
+
     def goto_washroom(self):
         # Currently use this function to simulate gotoWashroom event.
         print('Robot move: ' + 'goto washroom')
