@@ -24,7 +24,7 @@ def guide(name, current_position, destination):
     print('Guiding to %s' % destination)
     global bot
     global facial_recog
-    # bot.patrol(current_position)
+    bot.patrol(current_position)
     video_capture = cv2.VideoCapture(0)
     reached = False
     state = 'face lost'
@@ -37,8 +37,8 @@ def guide(name, current_position, destination):
             if face:
                 print('face found')
                 state = 'face found'
-                # bot.stop()
-                # bot.go_to(destination)
+                bot.stop()
+                bot.go_to(destination)
             else:
                 print('guest lost')
         elif state == 'face found':
@@ -47,8 +47,8 @@ def guide(name, current_position, destination):
                 print('face lost')
                 i = 0
                 state = 'face lost'
-                # bot.stop()
-                # bot.patrol(current_position)
+                bot.stop()
+                bot.patrol(current_position)
             else:
                 say('Please follow me')
                 print('leading guest')
@@ -72,21 +72,20 @@ def main(guest_info):
     face = guest_info['face']
     print('Guiding %s to %s' % (name, venue))
     sleep(1)
-    # bot.display(face)
+    bot.display(face)
     print('Displaying guest info')
     sleep(1)
     found = False
     video_capture = cv2.VideoCapture(0)
-    # bot.patrol('lobby')
+    bot.patrol('lobby')
     print('Patrolling lobby')
     sleep(1)
-    # for i in range(10):
     while not found:
         print('Looking for face')
         ret, frame = video_capture.read()
         found = facial_recog.find_face(name, frame)
         sleep(0.2)
-    # bot.stop()
+    bot.stop()
     video_capture.release()
     print('Guest found')
     say('Hello, %s! I am your robot guide for today!' % name)
@@ -98,22 +97,22 @@ def main(guest_info):
     lift.open_door()
     print('Waiting for guest to go in')
     sleep(1)
-    # bot.go_to('lift_1')
+    bot.go_to('lift_1')
     print('Going into lift')
     sleep(5)
     lift.close_door()
     lift.go_to_level(venue['level'])
-    # bot.go_to_level(venue['level'])
+    bot.go_to_level(venue['level'])
     lift.open_door()
     print('Waiting for guest to go out')
     sleep(5)
     lift.close_door()
-    # bot.go_to('venue_lift')
-    # bot.go_to(venue['room'])
+    bot.go_to('venue_lift')
+    bot.go_to(venue['room'])
     print('Going out of lift')
     sleep(1)
     guide(name, venue, venue)
-    # bot.stop()
+    bot.stop()
     print('Reached goal')
     sleep(1)
     print('Informing host that guest has arrived')
@@ -147,11 +146,11 @@ def send():
     while True:
         to_send = input('Enter command:\n')
         print('Sending to bot: ' + to_send)
-        # bot.cmd(to_send)
+        bot.cmd(to_send)
 
 
 if __name__ == '__main__':
-    # bot = Bot('192.168.99.131', 7171, 'adept')
+    bot = Bot('192.168.99.131', 7171, 'adept')
     print('connecting to bot')
     lift = Lift()
     kiosk = Kiosk()
