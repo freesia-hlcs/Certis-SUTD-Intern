@@ -1,4 +1,4 @@
 .idea/
 venv/
 *.jpg
-__pychace__/
+__pycache__/
