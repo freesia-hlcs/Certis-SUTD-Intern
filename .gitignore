@@ -1,4 +1,2 @@
-.idea/**
-michael-face/**
-venv/**
-**.jpg
+.idea/
+venv/
