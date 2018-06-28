@@ -13,9 +13,12 @@ class Bot(object):
             password_b = password.encode('utf8')
             self.s.send(password_b)
             print('connected to the bot')
+            text = ''
+            while 'End of commands' not in text:
+                text = self.receive()
+                print(text)
         except socket.error as e:
             print(e)
-            self.__init__(host, port, password)
 
     def receive(self, buffer_size=4096):
         msg_b = self.s.recv(buffer_size)
@@ -77,11 +80,29 @@ class Bot(object):
         print('Sending email')
         return True
 
+    def get_status(self):
+        print('Getting status')
+        self.cmd('status')
+        status_s = self.receive()
+        status_s += self.receive()
+        status_l = status_s.split('\r\n')
+        # print(status_s)
+        # print(status_l)
+        status_d = {}
+        for item in status_l:
+            try:
+                key, value = tuple(item.split(': '))
+                status_d[key] = value
+            except ValueError:
+                pass
+        return status_d
+
 
 if __name__ == '__main__':
     import threading
 
     bot = Bot('192.168.43.11', 7171, 'adept')
+    print(bot.get_status())
 
 
     def receive():
