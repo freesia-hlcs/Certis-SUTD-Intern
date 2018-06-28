@@ -150,12 +150,12 @@ def send():
 
 
 if __name__ == '__main__':
-    bot = Bot('192.168.99.131', 7171, 'adept')
-    print('connecting to bot')
+    bot = Bot('172.21.3.95', 7171, 'adept')
     lift = Lift()
     kiosk = Kiosk()
     facial_recog = FacialRecog()
     speech = Speech()
+    # guest_info = get_guest_info()
     guest_info = {'name': 'Michael',
                   'venue': {'name': 'EBC', 'level': 7},
                   'face': cv2.imread('michael2.jpg')}
