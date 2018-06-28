@@ -37,18 +37,24 @@ def guide(name, current_position, destination):
             if face:
                 print('face found')
                 state = 'face found'
-                bot.stop()
-                bot.go_to(destination)
+                if i >= 5:
+                    bot.stop()
+                    bot.go_to(destination)
+                    i = 0
             else:
-                print('guest lost')
+                if i >= 5:
+                    print('looking for guest')
+                    bot.stop()
+                    bot.patrol(current_position)
+                else:
+                    print('guest lost')
+                    i += 1
         elif state == 'face found':
             face = facial_recog.find_face(name, frame)
             if not face:
                 print('face lost')
                 i = 0
                 state = 'face lost'
-                bot.stop()
-                bot.patrol(current_position)
             else:
                 say('Please follow me')
                 print('leading guest')
@@ -150,7 +156,7 @@ def send():
 
 
 if __name__ == '__main__':
-    bot = Bot('172.21.3.95', 7171, 'adept')
+    bot = Bot('192.168.43.11', 7171, 'adept')
     lift = Lift()
     kiosk = Kiosk()
     facial_recog = FacialRecog()
