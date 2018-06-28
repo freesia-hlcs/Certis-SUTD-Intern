@@ -6,12 +6,16 @@ class Bot(object):
 
     def __init__(self, host, port, password):
         print('connecting to bot')
-        self.s = socket.socket()
-        self.s.connect((host, port))
-        password += '\r\n'
-        password_b = password.encode('utf8')
-        self.s.send(password_b)
-        print('connected to the bot')
+        try:
+            self.s = socket.socket()
+            self.s.connect((host, port))
+            password += '\r\n'
+            password_b = password.encode('utf8')
+            self.s.send(password_b)
+            print('connected to the bot')
+        except socket.error as e:
+            print(e)
+            self.__init__(host, port, password)
 
     def receive(self, buffer_size=4096):
         msg_b = self.s.recv(buffer_size)
@@ -72,3 +76,28 @@ class Bot(object):
     def inform_host(self, host_email):
         print('Sending email')
         return True
+
+
+if __name__ == '__main__':
+    import threading
+
+    bot = Bot('192.168.43.11', 7171, 'adept')
+
+
+    def receive():
+        while True:
+            print(bot.receive())
+
+
+    def send():
+        while True:
+            text = input('Enter command:\n')
+            bot.cmd(text)
+
+
+    t1 = threading.Thread(target=receive, args=())
+    t2 = threading.Thread(target=send, args=())
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
