@@ -92,15 +92,19 @@ class Bot(object):
         status_s = self.receive()
         status_s += self.receive()
         status_l = status_s.split('\r\n')
-        # print(status_s)
-        # print(status_l)
         status_d = {}
         for item in status_l:
-            try:
+            if not item.startswith('Status'):
                 key, value = tuple(item.split(': '))
                 status_d[key] = value
-            except ValueError:
-                pass
+            else:
+                status = item[8:]
+                status = status.split(' ')
+                s = {}
+                for i in range(len(status)):
+                    if status[i].endswith(':'):
+                        s[status[i]] = status[i+1]
+                status_d['Status'] = s
         return status_d
 
     def get_position(self):
@@ -113,7 +117,6 @@ if __name__ == '__main__':
     import threading
 
     bot = Bot('192.168.43.11', 7171, 'adept')
-    print(bot.get_status())
 
 
     def receive():
