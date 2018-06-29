@@ -31,7 +31,6 @@ def guide(name, current_position, destination):
     i = 0
     while not reached:
         ret, frame = video_capture.read()
-        cv2.imshow('window', frame)
         if state == 'face lost':
             face = facial_recog.find_face(name, frame)
             if face:
@@ -64,7 +63,6 @@ def guide(name, current_position, destination):
         sleep(0.2)
         reached = bot.check_reached()
     video_capture.release()
-    cv2.destroyAllWindows()
 
 
 def main(guest_info):

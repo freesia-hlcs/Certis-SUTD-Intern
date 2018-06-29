@@ -49,8 +49,7 @@ class Bot(object):
         command = 'localizeAtGoal %d_lift' % level
         return self.cmd(command)
 
-    def check_reached(self):
-        threshold = 1
+    def check_reached(self, threshold=1):
         self.cmd('goalDistanceRemaining')
         distance = float(self.receive())
         if distance <= threshold:
