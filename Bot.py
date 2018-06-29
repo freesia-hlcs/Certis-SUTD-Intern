@@ -97,6 +97,11 @@ class Bot(object):
                 pass
         return status_d
 
+    def get_position(self):
+        print('Getting bot position')
+        position = self.get_status()['Location'].split(' ')
+        return int(position[0]), int(position[1]), int(position[2])
+
 
 if __name__ == '__main__':
     import threading
