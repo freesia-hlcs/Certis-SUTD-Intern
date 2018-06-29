@@ -69,11 +69,6 @@ class Bot(object):
         print('Displaying guest info: %s' % to_display)
         return True
 
-    def wait_til(self, check_method, args=None, reference_value=True):
-        while not check_method(args) == reference_value:
-            sleep(0.1)
-        return True
-
     def dock(self):
         command = 'dock'
         return self.cmd(command)

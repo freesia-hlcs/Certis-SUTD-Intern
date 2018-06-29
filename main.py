@@ -20,6 +20,12 @@ def get_guest_info():
     return guest_info
 
 
+def wait_til(check_method, args=None, reference_value=True):
+    while not check_method(args) == reference_value:
+        sleep(0.1)
+    return True
+
+
 def guide(name, current_position, destination):
     print('Guiding to %s' % destination)
     global bot
