@@ -1,5 +1,6 @@
 import socket
 from time import sleep
+from math import cos, sin
 
 
 class Bot(object):
@@ -40,7 +41,7 @@ class Bot(object):
         command = 'stop'
         return self.cmd(command)
 
-    def go_to(self, goal_name):
+    def go_to_goal(self, goal_name):
         command = 'goto ' + goal_name
         return self.cmd(command)
 
@@ -98,19 +99,26 @@ class Bot(object):
                 key, value = tuple(item.split(': '))
                 status_d[key] = value
             else:
-                status = item[8:]
-                status = status.split(' ')
+                status = item[8:].split(' ')
                 s = {}
                 for i in range(len(status)):
                     if status[i].endswith(':'):
-                        s[status[i]] = status[i+1]
+                        s[status[i][:-1]] = status[i+1]
                 status_d['Status'] = s
         return status_d
 
     def get_position(self):
         print('Getting bot position')
-        position = self.get_status()['Location'].split(' ')
-        return int(position[0]), int(position[1]), int(position[2])
+        location = self.get_status()['Location'].split(' ')
+        position = (int(location[0]), int(location[1]), int(location[2]))
+        return position
+
+    def go_to_point(self, point_r, point_th):
+        bot_x, bot_y, bot_th = self.get_position()
+        th = bot_th + point_th
+        x = bot_x + point_r * cos(th)
+        y = bot_y + point_r * sin(th)
+        return self.cmd('goto %f %f %f' % (x, y, (point_th - bot_th)))
 
 
 if __name__ == '__main__':
