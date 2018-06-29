@@ -58,10 +58,11 @@ def guide(name, current_position, destination):
             else:
                 say('Please follow me')
                 print('leading guest')
-                i += 1
-                if i > 5:
-                    reached = True
+                # i += 1
+                # if i > 5:
+                #     reached = True
         sleep(0.2)
+        reached = bot.check_reached()
     video_capture.release()
     cv2.destroyAllWindows()
 

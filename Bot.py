@@ -45,13 +45,13 @@ class Bot(object):
         command = 'goto ' + goal_name
         return self.cmd(command)
 
-    def go_to_level(self, level):
-        command = 'localizeAtGoal ' + level
+    def lift_to_level(self, level):
+        command = 'localizeAtGoal %d_lift' % level
         return self.cmd(command)
 
     def check_reached(self):
         threshold = 1
-        self.cmd('goalDIstanceRemaining')
+        self.cmd('goalDistanceRemaining')
         distance = float(self.receive())
         if distance <= threshold:
             return True
@@ -103,7 +103,10 @@ class Bot(object):
                 s = {}
                 for i in range(len(status)):
                     if status[i].endswith(':'):
-                        s[status[i][:-1]] = status[i+1]
+                        try:
+                            s[status[i][:-1]] = status[i+1]
+                        except IndexError:
+                            pass
                 status_d['Status'] = s
         return status_d
 
