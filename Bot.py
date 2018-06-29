@@ -48,8 +48,14 @@ class Bot(object):
         command = 'localizeAtGoal ' + level
         return self.cmd(command)
 
-    def check_reached(self, goal_name):
-        return True
+    def check_reached(self):
+        threshold = 1
+        self.cmd('goalDIstanceRemaining')
+        distance = float(self.receive())
+        if distance <= threshold:
+            return True
+        else:
+            return False
 
     def patrol(self, route_name):
         command = 'patrol ' + route_name
@@ -77,7 +83,7 @@ class Bot(object):
         return self.cmd(command)
 
     def inform_host(self, host_email):
-        print('Sending email')
+        print('Sending email to %s' % host_email)
         return True
 
     def get_status(self):
