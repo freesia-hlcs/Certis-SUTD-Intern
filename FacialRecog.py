@@ -33,8 +33,8 @@ class FacialRecog(object):
 
         self.face_dic = {}
 
-    def add_face(self, name, img):
-        self.face_dic[name] = self.get_face(img)[0]
+    def train(self, name, img):
+        self.face_dic[name] = self.get_faces(img)[0]
 
     def get_embedding(self, resized):
         reshaped = resized.reshape(-1, self.input_image_size, self.input_image_size, 3)
@@ -42,7 +42,7 @@ class FacialRecog(object):
         embedding = self.sess.run(self.embeddings, feed_dict=feed_dict)
         return embedding
 
-    def get_face(self, img):
+    def get_faces(self, img):
         faces = []
         img_size = np.asarray(img.shape)[0:2]
         bounding_boxes, _ = detect_face.detect_face(img, self.minsize, self.pnet, self.rnet, self.onet,
@@ -91,14 +91,28 @@ class FacialRecog(object):
         theta = (x - 200) * 0.25
         return r, theta
 
-    def find_face(self, name, img):
-        test_face = self.face_dic[name]
-        faces = self.get_face(img)
+    # def find_face(self, name):
+    #     test_face = self.face_dic[name]
+    #     video_capture = cv2.VideoCapture(0)
+    #     ret, frame = video_capture.read()
+    #     faces = self.get_faces(frame)
+    #     for face in faces:
+    #         dist = self.compare2face(test_face, face)
+    #         if dist <= self.max_dist and dist != -1:
+    #             video_capture.release()
+    #             return True
+    #     video_capture.release()
+    #     return False
+
+    def main(self, img):
+        faces = self.get_faces(img)
+        output = []
         for face in faces:
-            dist = self.compare2face(test_face, face)
-            if dist <= self.max_dist and dist != -1:
-                return True
-        return False
+            name, distance = self.identify(face)
+            r, th = self.get_position(face)
+            d = {'name': name, 'distance': distance, 'r': r, 'th': th}
+            output.append(d)
+        return output
 
 
 if __name__ == '__main__':
@@ -111,14 +125,14 @@ if __name__ == '__main__':
     }
     facial_recog = FacialRecog()
     for name in img_dic:
-        facial_recog.add_face(name, img_dic[name])
+        facial_recog.train(name, img_dic[name])
     while True:
         if not video_capture.isOpened():
             print('Unable to load camera')
             sleep(5)
             continue
         ret, frame = video_capture.read()
-        faces = facial_recog.get_face(frame)
+        faces = facial_recog.get_faces(frame)
         new_frame = frame
         if faces is not None:
             for face in faces:
