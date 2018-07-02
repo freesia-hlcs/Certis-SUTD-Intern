@@ -91,27 +91,13 @@ class FacialRecog(object):
         theta = (x - 200) * 0.25
         return r, theta
 
-    # def find_face(self, name):
-    #     test_face = self.face_dic[name]
-    #     video_capture = cv2.VideoCapture(0)
-    #     ret, frame = video_capture.read()
-    #     faces = self.get_faces(frame)
-    #     for face in faces:
-    #         dist = self.compare2face(test_face, face)
-    #         if dist <= self.max_dist and dist != -1:
-    #             video_capture.release()
-    #             return True
-    #     video_capture.release()
-    #     return False
-
     def main(self, img):
         faces = self.get_faces(img)
-        output = []
+        output = {}
         for face in faces:
             name, distance = self.identify(face)
             r, th = self.get_position(face)
-            d = {'name': name, 'distance': distance, 'r': r, 'th': th}
-            output.append(d)
+            output[name] = {'distance': distance, 'r': r, 'th': th}
         return output
 
 
