@@ -104,18 +104,26 @@ class Bot(object):
                 status_d['Status'] = s
         return status_d
 
-    def get_position(self):
+    def get_bot_position(self):
         print('Getting bot position')
         location = self.get_status()['Location'].split(' ')
         position = (int(location[0]), int(location[1]), int(location[2]))
         return position
 
-    def go_to_point(self, point_r, point_th):
-        bot_x, bot_y, bot_th = self.get_position()
+    def get_point(self, point_r, point_th):
+        bot_x, bot_y, bot_th = self.get_bot_position()
         th = bot_th + point_th
         x = bot_x + point_r * cos(th)
         y = bot_y + point_r * sin(th)
-        return self.cmd('goto %f %f %f' % (x, y, (point_th - bot_th)))
+        point = (x, y, th)
+        return point
+
+    def go_to_point(self, point):
+        return self.cmd('goto %f %f %f' % point)
+
+    def get_current_location(self):
+        x, y, th = self.get_bot_position()
+        return 'lobby'
 
 
 if __name__ == '__main__':

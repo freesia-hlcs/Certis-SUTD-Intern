@@ -97,8 +97,19 @@ class FacialRecog(object):
         for face in faces:
             name, distance = self.identify(face)
             r, th = self.get_position(face)
-            output[name] = {'distance': distance, 'r': r, 'th': th}
+            if name != 'Visitor':
+                if name not in output or distance < output[name]['distance']:
+                    output[name] = {'distance': distance, 'r': r, 'th': th}
         return output
+
+    def check_face(self, args):
+        img = args[0]
+        name = args[1]
+        faces = self.main(img)
+        if name in faces:
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':

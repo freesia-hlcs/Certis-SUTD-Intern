@@ -26,11 +26,61 @@ def wait_til(check_method, args=None, reference_value=True):
     return True
 
 
-def guide(name, current_position, destination):
-    print('Guiding to %s' % destination)
+def approach_guest(guest_info):
     global bot
     global facial_recog
-    bot.patrol(current_position)
+    guest_name = guest_info['name']
+    current_location = bot.get_current_location()
+    video_capture = cv2.VideoCapture(0)
+    ret, frame = video_capture.read()
+    faces = facial_recog.main(frame)
+    if guest_name in faces:
+        found = True
+        point = bot.get_point(faces[guest_name]['r'], faces[guest_name]['th'])
+    else:
+        found = False
+        point = None
+    if found:
+        bot.go_to_point(point)
+        state = 'approaching'
+    else:
+        bot.patrol(current_location)
+        state = 'patrolling'
+    reached = False
+    while not reached:
+        ret, frame = video_capture.read()
+        faces = facial_recog.main(frame)
+        if guest_name in faces:
+            found = True
+            r = faces[guest_name]['r']
+            th = faces[guest_name]['th']
+            point = bot.get_point(r, th)
+            if r < 100:
+                reached = True
+                continue
+        else:
+            found = False
+        if state == 'approaching':
+            if found:
+                bot.go_to_point(point)
+            elif bot.check_reached():
+                bot.patrol(current_location)
+                state = 'patrolling'
+        else:
+            if found:
+                bot.stop()
+                bot.go_to_point(point)
+                state = 'approaching'
+        sleep(0.2)
+    bot.stop()
+    video_capture.release()
+
+
+def guide(name, current_location, destination):
+    global bot
+    global facial_recog
+    print('Guiding to %s' % destination)
+    bot.patrol(current_location)
     video_capture = cv2.VideoCapture(0)
     reached = False
     state = 'face lost'
@@ -50,7 +100,7 @@ def guide(name, current_position, destination):
                 if i >= 5:
                     print('looking for guest')
                     bot.stop()
-                    bot.patrol(current_position)
+                    bot.patrol(current_location)
                 else:
                     print('guest lost')
                     i += 1
@@ -86,18 +136,7 @@ def main(guest_info):
     bot.display(face)
     print('Displaying guest info')
     sleep(1)
-    found = False
-    video_capture = cv2.VideoCapture(0)
-    bot.patrol('lobby')
-    print('Patrolling lobby')
-    sleep(1)
-    while not found:
-        print('Looking for face')
-        ret, frame = video_capture.read()
-        found = facial_recog.find_face(name, frame)
-        sleep(0.2)
-    bot.stop()
-    video_capture.release()
+    approach_guest(guest_info)
     print('Guest found')
     say('Hello, %s! I am your robot guide for today!' % name)
     sleep(1)
@@ -170,7 +209,7 @@ if __name__ == '__main__':
     guest_info = {'name': 'Michael',
                   'venue': {'name': 'EBC', 'level': 7},
                   'face': cv2.imread('michael2.jpg')}
-    facial_recog.add_face(guest_info['name'], guest_info['face'])
+    facial_recog.train(guest_info['name'], guest_info['face'])
     activated = False
     t_kiosk = threading.Thread(target=get_kiosk, args=())
     t_guide = threading.Thread(target=main, args=(guest_info,))
