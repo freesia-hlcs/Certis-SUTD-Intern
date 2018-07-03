@@ -34,10 +34,12 @@ def eyes():
     while True:
         ret, frame = video_capture.read()
         faces = facial_recog.main(frame)
+        cv2.imshow('window', frame)
         sleep(0.2)
         if bot_state == 'idle':
             break
     video_capture.release()
+    cv2.destroyAllWindows()
 
 
 def approach_guest(guest_name):
@@ -54,6 +56,7 @@ def approach_guest(guest_name):
                 r = faces[guest_name]['r']
                 th = faces[guest_name]['th']
                 point = bot.get_point(r, th)
+                print(point)
                 bot.go_to_point(point)
                 reached = r < 100
             elif bot.check_reached():
