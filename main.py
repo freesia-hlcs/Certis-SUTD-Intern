@@ -36,8 +36,8 @@ def eyes():
         faces = facial_recog.main(frame)
         sleep(0.2)
         if bot_state == 'idle':
-            video_capture.release()
             break
+    video_capture.release()
 
 
 def approach_guest(guest_name):
