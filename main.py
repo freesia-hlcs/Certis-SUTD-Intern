@@ -29,13 +29,13 @@ def wait_til(check_method, args=None, reference_value=True):
 def eyes():
     global facial_recog
     global faces
-    global state
+    global bot_state
     video_capture = cv2.VideoCapture(0)
     while True:
         ret, frame = video_capture.read()
         faces = facial_recog.main(frame)
         sleep(0.2)
-        if state == 'idle':
+        if bot_state == 'idle':
             video_capture.release()
             break
 
@@ -92,7 +92,7 @@ def main():
     global facial_recog
     global bot
     global lift
-    global state
+    global bot_state
     say('Getting info from kiosk')
     guest_info = get_guest_info()
     name = guest_info['name']
@@ -115,7 +115,7 @@ def main():
     say('Please follow me')
     lift.close_door()
     guide(name, destination['venue'])
-    state = 'idle'
+    bot_state = 'idle'
 
 
 if __name__ == '__main__':
@@ -123,13 +123,13 @@ if __name__ == '__main__':
     kiosk = Kiosk()
     lift = Lift()
     facial_recog = FacialRecog()
-    state = 'idle'
+    bot_state = 'idle'
     faces = {}
     while True:
-        if state == 'idle':
+        if bot_state == 'idle':
             text = input('Is the guest here?\n')
             if text == 'y':
-                state = 'guest'
+                bot_state = 'guest'
         else:
             t_eyes = threading.Thread(target=eyes, args=())
             t_main = threading.Thread(target=main, args=())
@@ -137,7 +137,7 @@ if __name__ == '__main__':
             t_main.start()
             t_eyes.join()
             t_main.join()
-            state = 'idle'
+            bot_state = 'idle'
             bot.go_to_goal('lobby')
 
 
