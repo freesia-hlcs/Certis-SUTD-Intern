@@ -81,6 +81,7 @@ def guide(name, destination):
     reached = bot.check_reached()
     while not reached:
         if name not in faces or faces[name]['r'] > 100:
+            bot.stop()
             approach_guest(name)
             bot.go_to_goal(destination)
         reached = bot.check_reached()
