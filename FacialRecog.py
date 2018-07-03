@@ -85,7 +85,7 @@ class FacialRecog(object):
         return best_name, best_dist if best_dist != 100 else -1
 
     def get_position(self, face):
-        x = face['rect'][0]
+        x = 0.5 * (face['rect'][0] + face['rect'][2])
         size = 0.5 * (face['rect'][2] - face['rect'][0] + face['rect'][3] - face['rect'][1])
         r = 0.25 * size
         theta = (x - 200) * 0.25
