@@ -87,7 +87,7 @@ class FacialRecog(object):
     def get_position(self, face):
         x = 0.5 * (face['rect'][0] + face['rect'][2])
         size = 0.5 * (face['rect'][2] - face['rect'][0] + face['rect'][3] - face['rect'][1])
-        r = 0.25 * size
+        r = 15 / np.tan(0.0015 * size)
         theta = (x - 200) * 0.25
         return r, theta
 

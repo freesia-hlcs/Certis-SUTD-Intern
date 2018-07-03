@@ -35,9 +35,11 @@ def eyes():
         ret, frame = video_capture.read()
         faces = facial_recog.main(frame)
         cv2.imshow('window', frame)
-        sleep(0.2)
         if bot_state == 'idle':
             break
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+        print(faces)
     video_capture.release()
     cv2.destroyAllWindows()
 
@@ -123,6 +125,11 @@ def main():
 
 
 if __name__ == '__main__':
+    # facial_recog = FacialRecog()
+    # facial_recog.train('Michael', cv2.imread('michael2.jpg'))
+    # bot_state = 'guest'
+    # faces = {}
+    # eyes()
     bot = Bot('192.168.43.11', 7171, 'adept')
     kiosk = Kiosk()
     lift = Lift()
