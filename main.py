@@ -29,18 +29,21 @@ def wait_til(check_method, args=None, reference_value=True):
 def eyes():
     global facial_recog
     global faces
+    global state
     video_capture = cv2.VideoCapture(0)
     while True:
         ret, frame = video_capture.read()
         faces = facial_recog.main(frame)
-        sleep(0.1)
+        sleep(0.2)
+        if state == 'idle':
+            video_capture.release()
+            break
 
 
-def approach_guest(guest_info):
+def approach_guest(guest_name):
     global bot
     global facial_recog
     global faces
-    guest_name = guest_info['name']
     current_location = bot.get_current_location()
     reached = False
     state = 'patrolling'
@@ -68,10 +71,74 @@ def approach_guest(guest_info):
                 reached = r < 100
                 state = 'approaching'
         sleep(0.2)
+    bot.stop()
 
 
 def guide(name, destination):
-    pass
+    global bot
+    global faces
+    bot.go_to_goal(destination)
+    reached = bot.check_reached()
+    while not reached:
+        if name not in faces or faces[name]['r'] > 100:
+            approach_guest(name)
+            bot.go_to_goal(destination)
+        reached = bot.check_reached()
+        sleep(0.2)
+    bot.stop()
+
+
+def main():
+    global facial_recog
+    global bot
+    global lift
+    global state
+    say('Getting info from kiosk')
+    guest_info = get_guest_info()
+    name = guest_info['name']
+    img = guest_info['pic']
+    destination = guest_info['venue']
+    facial_recog.train(name, img)
+    say('Getting guest picture')
+    approach_guest(name)
+    say('Hello, %s! I will be your guide today!' % name)
+    guide(name, 'lobby_lift')
+    say('Calling lift')
+    lift.call_lift(1)
+    say('Opening lift door')
+    lift.open_door()
+    say('Please go in the lift!')
+    lift.close_door()
+    lift.go_to_level(destination[0])
+    lift.open_door()
+    bot.go_to_goal('outside lift')
+    say('Please follow me')
+    lift.close_door()
+    guide(name, destination['venue'])
+    state = 'idle'
+
+
+if __name__ == '__main__':
+    bot = Bot('192.168.43.11', 7171, 'adept')
+    kiosk = Kiosk()
+    lift = Lift()
+    facial_recog = FacialRecog()
+    state = 'idle'
+    faces = {}
+    while True:
+        if state == 'idle':
+            text = input('Is the guest here?\n')
+            if text == 'y':
+                state = 'guest'
+        else:
+            t_eyes = threading.Thread(target=eyes, args=())
+            t_main = threading.Thread(target=main, args=())
+            t_eyes.start()
+            t_main.start()
+            t_eyes.join()
+            t_main.join()
+            state = 'idle'
+            bot.go_to_goal('lobby')
 
 
 # def approach_guest(guest_info):
