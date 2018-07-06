@@ -8,16 +8,43 @@ from time import sleep
 import threading
 
 
+def get_kiosk():
+    global activated
+    global guest_info
+    while True:
+        if bot_state == 'idle':
+            guest = input('Is guest here? ')
+            if guest == 'y':
+                bot_state = 'guest'
+
+                sleep(2)
+                kiosk.constant_get_info()
+
+
 def get_guest_info():
     global facial_recog
     global kiosk
-    print('Getting guest info')
-    name, venue = kiosk.get_guest_info()
-    face_pic = kiosk.get_guest_pic()
-    guest_info = {'name': name,
-                  'venue': venue,
-                  'face': facial_recog.get_face(face_pic)[0]}
-    return guest_info
+    global guest_info
+    global activated
+    if bot_state == 'guest':
+        print('Getting guest info')
+    else:
+        sleep(5)
+        return get_guest_info()
+    while 1:
+        name = kiosk.name
+        venue = kiosk.venue
+        # face_pic = kiosk.get_guest_pic()
+        if name == '' or venue == '':
+            sleep(5)
+            print(name, venue)
+            return get_guest_info()
+        elif name != '' or venue != '':
+            print(name, venue)
+            guest_info = {'name': name,
+                          'venue': venue,
+                          'face': cv2.imread('xinran.jpg')}  # facial_recog.get_face(face_pic)[0]
+        return guest_info
 
 
 def wait_til(check_method, args=None, reference_value=True):
@@ -107,7 +134,24 @@ def main():
     facial_recog.train(name, img)
     say('Getting guest picture')
     approach_guest(name)
-    say('Hello, %s! I will be your guide today!' % name)
+    say('Hello, I will be your guide today!')
+    # double check guest's name
+    speech.check_name()
+    speech.common_talk_name()
+    name_bot = speech.print_name()
+    if name_bot == name:
+        say('Hi, %s!' % name_bot)
+    else:
+        say('May I double check with you? Are you %s?' % name)
+        speech.double_check_name()
+        speech.common_talk_double_check()
+        check = speech.print_check()
+        if check == 'true':
+            pass
+        elif check == 'false':
+            print('keep finding')
+            return main()  # need to be added
+    say('Guiding %s to %s' % (name, destination))
     guide(name, 'lobby_lift')
     say('Calling lift')
     lift.call_lift(1)
@@ -121,6 +165,8 @@ def main():
     say('Please follow me')
     lift.close_door()
     guide(name, destination['venue'])
+    speech.order_drink()
+    speech.common_talk()
     bot_state = 'idle'
 
 
@@ -133,20 +179,23 @@ if __name__ == '__main__':
     bot = Bot('192.168.43.11', 7171, 'adept')
     kiosk = Kiosk()
     lift = Lift()
+    speech = Speech()
     facial_recog = FacialRecog()
     bot_state = 'idle'
     faces = {}
-    while True:
-        if bot_state == 'idle':
-            text = input('Is the guest here?\n')
-            if text == 'y':
-                bot_state = 'guest'
-        else:
-            t_eyes = threading.Thread(target=eyes, args=())
-            t_main = threading.Thread(target=main, args=())
-            t_eyes.start()
-            t_main.start()
-            t_eyes.join()
-            t_main.join()
-            bot_state = 'idle'
-            bot.go_to_goal('lobby')
+    guest_info = {'name': 'name',
+                  'venue': 'venue',
+                  'face': cv2.imread('xinran.jpg')}
+
+    t_eyes = threading.Thread(target=eyes, args=())
+    t_main = threading.Thread(target=main, args=())
+    t_kiosk = threading.Thread(target=get_kiosk, args=())
+    # t_guide = threading.Thread(target=main, args=(guest_info,))
+    t_kiosk.start()
+    get_guest_info()
+    t_eyes.start()
+    t_main.start()
+    t_eyes.join()
+    t_main.join()
+    bot_state = 'idle'
+    bot.go_to_goal('lobby')
