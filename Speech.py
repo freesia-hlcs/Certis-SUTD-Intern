@@ -85,9 +85,12 @@ class Speech():
             else:
                 self.action = ''
 
-        if dict['result']["metadata"] != {}:  # Being empty means that now the talk intent belongs to common talk
-            intent = dict['result']["metadata"]["intentName"]
-            self.event_check(intent)
+        try:
+            if dict['result']["metadata"] != {}:  # Being empty means that now the talk intent belongs to common talk
+                intent = dict['result']["metadata"]["intentName"]
+                self.event_check(intent)
+        except KeyError:
+            pass
 
     def event_check(self, intent):
         if intent == 'GoWashroom':
@@ -134,10 +137,13 @@ class Speech():
     def print_check(self):
         return self.check
 
-    def common_talk(self):
+    def common_talk(self): #will stop responding until the guest says byebye
         words = self.listen()
-        self.respond_to(words)
-        return self.common_talk()
+        if words == 'goodbye' or 'bye bye':
+            print('Bye bye')
+        else:
+            self.respond_to(words)
+            return self.common_talk()
 
     def goto_washroom(self):
         # Currently use this function to simulate gotoWashroom event.
@@ -145,7 +151,7 @@ class Speech():
 
 
 if __name__ == '__main__':
-    test = speech()
+    test = Speech()
     say('Welcome to Certis CISCO Security! This is the meeting place.')
     #test.order_drink()
     test.double_check_name()
