@@ -30,15 +30,15 @@ helper = IdentificationServiceHttpClientHelper.IdentificationServiceHttpClientHe
 
 class speaker_identification():
     def __init__(self):
-        self.num_samples = 2000  # pyaudio内置缓冲大小
-        self.sampling_rate = 16000  # 取样频率
-        self.level = 1500  # 声音保存的阈值
-        self.count_num = 20  # count_num个取样之内出现COUNT_NUM个大于LEVEL的取样则记录声音
-        self.save_length = 8  # 声音记录的最小长度：save_length * num_samples 个取样
+        self.num_samples = 2000
+        self.sampling_rate = 16000
+        self.level = 1500
+        self.count_num = 20
+        self.save_length = 8
+        #↑↑↑setting parameters for audio record
         self.voice_string = []
         self.profile_file = 'profile_info.xls'
 
-    # 保存文件
     def save_wav(self, filename):
         wf = wave.open(filename, 'wb')
         wf.setnchannels(1)
@@ -56,16 +56,12 @@ class speaker_identification():
         save_count = 0
         save_buffer = []
         while True:
-            # 读入num_samples个取样
             string_audio_data = stream.read(self.num_samples)
-            # 将读入的数据转换为数组
             audio_data = np.fromstring(string_audio_data, dtype=np.short)
-            # 计算大于 level 的取样的个数
             large_sample_count = np.sum(audio_data > self.level)
 
             print(np.max(audio_data)), "large_sample_count=>", large_sample_count
 
-            # 如果个数大于COUNT_NUM，则至少保存SAVE_LENGTH个块
             if large_sample_count > self.count_num:
                 save_count = self.save_length
             else:
@@ -94,6 +90,11 @@ class speaker_identification():
         return True
 
     def model_train(self,name):
+        """
+        Create the voice profile info for the guest and finish the basic trainning
+        :param name: The name of the speaker whose voice is being input
+        :return:voice enroll status
+        """
         profile_id = create_profile(subscription_key, 'en-US')
         profile_info = {name: profile_id}
         self.profile_save(profile_info)
@@ -106,6 +107,11 @@ class speaker_identification():
         return output
 
     def profile_save(self,profile_info):
+        """
+        Save profile info in excel
+        :param profile_info: name-voice_profile_id pair
+        :return:
+        """
         readbook = xlrd.open_workbook(self.profile_file)
         table = readbook.sheets()[0] #What if we use the sheet as a claasifier tool?
         # table.row_values(i)
@@ -118,8 +124,10 @@ class speaker_identification():
         writesheet.write(nrows, 1, list(profile_info.values())[0])
         workbook.save('profile_info.xls')
 
+
     time1, time2, time3, time4, time5 = 0.0, 0.0, 0.0, 0.0, 0.0
     def speech_identify(self):
+        """Identify the speker by compare current sentence with the voice feature stored in Azure server."""
         global time1, time2, time3, time4, time5
         time1 = time.time()
         with sr.Microphone() as source:
