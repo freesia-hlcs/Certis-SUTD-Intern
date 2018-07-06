@@ -28,7 +28,7 @@ subscription_key = '47bfaa2bbd704085a369ef7c17f4daef'
 helper = IdentificationServiceHttpClientHelper.IdentificationServiceHttpClientHelper(
         subscription_key)
 
-class speaker_identification(object):
+class speaker_identification():
     def __init__(self):
         self.num_samples = 2000  # pyaudio内置缓冲大小
         self.sampling_rate = 16000  # 取样频率
@@ -77,10 +77,11 @@ class speaker_identification(object):
                 save_buffer.append(string_audio_data)
             else:
                 if len(save_buffer) > 0:
-                    self.voice_string = save_buffer
-                    save_buffer = []
-                    print("Recode a piece of  voice successfully!")
-                    return True
+                    # self.voice_string = save_buffer
+                    # save_buffer = []
+                    # print("Recode a piece of  voice successfully!")
+                    # return True
+                    pass
 
             if keyboard.is_pressed('space'):
                 if len(save_buffer) > 0:
@@ -92,10 +93,6 @@ class speaker_identification(object):
                     return False
         return True
 
-    # def record_voice(self):
-    #     self.read_audio()
-    #     self.save_wav("./test_reocrd.wav")
-
     def model_train(self,name):
         profile_id = create_profile(subscription_key, 'en-US')
         profile_info = {name: profile_id}
@@ -105,13 +102,13 @@ class speaker_identification(object):
         self.read_audio()
         self.save_wav("./"+file_name)
         output = enroll_profile(subscription_key, profile_id, file_name, 'True')
-        print("Console: {}({})'s profile is enrolled successfully.".format(name, profile_id))
+        print("Console: {} ({})'s profile is enrolled successfully.".format(name, profile_id))
         return output
 
     def profile_save(self,profile_info):
-        readbook = xlrd.open_workbook('profile_info.xls')
+        readbook = xlrd.open_workbook(self.profile_file)
         table = readbook.sheets()[0] #What if we use the sheet as a claasifier tool?
-        #大部分人让我学着去看世俗的眼光
+        # table.row_values(i)
         nrows = table.nrows
         ncols = table.ncols
 
@@ -121,90 +118,38 @@ class speaker_identification(object):
         writesheet.write(nrows, 1, list(profile_info.values())[0])
         workbook.save('profile_info.xls')
 
-
+    time1, time2, time3, time4, time5 = 0.0, 0.0, 0.0, 0.0, 0.0
     def speech_identify(self):
-        pass
-        # with open(file_path, 'rb') as body:
-        #需要对excel进行检索
+        global time1, time2, time3, time4, time5
+        time1 = time.time()
+        with sr.Microphone() as source:
+            print("Say something!")
+            audio = r.listen(source)
+            temp = audio.get_wav_data(convert_rate=16000)
 
-
-def vocie_register(name):
-    profile_id = create_profile(subscription_key,'en-US')
-    print("Your info has been created: ", {name:profile_id})
-    #{'Wang Cheng': '8a6c92cf-451d-477b-878e-71530fc0a0d6'}
-    #Tang_Xinran(3a6c906e-c357-4305-af3b-1c47e579c91c)
-    return profile_id
-
-count = 1
-def record_file(name,profile_id):
-    # write audio to a WAV file
-    global count
-    with sr.Microphone() as source:
-        print("Say something!")
-        audio = r.listen(source)
-        temp = audio.get_wav_data(convert_rate=16000)
-    file_name = name +"_"+str(count)+ ".wav"
-    with open(file_name , "wb") as f:
-        f.write(temp)
-        print('The file is saved.')
-    check = input("Is the reocoring okay? (Y/n)")
-    if check == 'Y':
-        if count <= 2:
-            count += 1
-            enroll_profile(subscription_key, profile_id, file_name, 'True')
-            print('Still need to record {} times.'.format(str(4-count)))
-            return record_file(name,profile_id)
-        else:
-            print("{}({})'s profile is enrolled successfully.".format(name,subscription_key))
-            return enroll_profile(subscription_key, '8a6c92cf-451d-477b-878e-71530fc0a0d6', file_name, 'True')
-    elif check == 'n':
-        return record_file(name,profile_id)
-time1,time2,time3,time4,time5 = 0.0,0.0,0.0,0.0,0.0
-def identification(profile_ids):
-    global time1,time2,time3,time4,time5
-    file_name = 'test_file.wav'
-    time1 = time.time()
-    with sr.Microphone() as source:
-        print("Say something!")
-        audio = r.listen(source)
-        temp = audio.get_wav_data(convert_rate=16000)
-        #identify_file(subscription_key, file_path, force_short_audio, profile_ids)
-    time2 = time.time()
-
-    with open(file_name , "wb") as f:
-        f.write(temp)
-        print('The file is saved.')
-    time3 = time.time()
-    check = input("Is the reocoring okay? (Y/n)")
-    if check == 'Y':
-        time4 = time.time()
-        response = identify_file(subscription_key, file_name, 'True', profile_ids)
-        time5 = time.time()
-        return response['Identified Speaker']
-    elif check == 'n':
-        return identification(profile_ids)
-    #提高速度的方法：多线程，减少文件存储与读取时间
-
-
+        readbook = xlrd.open_workbook(self.profile_file)
+        table = readbook.sheets()[0]  # What if we use the sheet as a claasifier tool?
+        profile_ids = table.col_values(1)
+        profile_names = table.col_values(0)
+        response = identify_file(subscription_key, temp, 'True', profile_ids)
+        speaker_id =  response['Identified Speaker ID']
+        speaker_name = profile_names[profile_ids.index(speaker_id)]
+        print('Console: {} is speaking.'.format(speaker_name))
 
 
 def main():
-    name = input('Name: ')
-    profile_id  = vocie_register(name)
-    # name = 'Wang Cheng'
-    eidted_name = name.replace(' ','_')
-    record_file(eidted_name,profile_id)
-    profile_info = {"Wang Cheng":"8a6c92cf-451d-477b-878e-71530fc0a0d6","Tang Xinran":"3a6c906e-c357-4305-af3b-1c47e579c91c",'Mei Mei':"34172e8b-7b20-4553-9c4d-f9acf67e854c"}
-    profile_id_lis = list(profile_info.values())
-    profile_ids = profile_id_lis[0]
-    for id in profile_id_lis[1:]:
-        profile_ids += ',{}'.format(id)
-    speaker_id = identification(profile_id_lis)
-    print('The speaker is {}.'.format(list(profile_info.keys())[list(profile_info.values()).index(speaker_id)]))
-    print(time2-time1,time3-time2,time4-time3,time5-time4)
+    identify = speaker_identification()
+    name = input('pls enter your name: ')
+    if name == 'identify':
+        while not keyboard.is_pressed('esc'):
+            identify.speech_identify()
+    elif name == 'reset':
+        pass
+    else:
+        identify.model_train(name)
+
 
 if __name__ == '__main__':
-    # r = GenAudio()
-    # r.read_audio()
-    # r.save_wav("./test_reocrd.wav")
-    main()
+    while 1:
+        main()
+
