@@ -1,0 +1,9 @@
+pip
+tensorflow
+opencv-contrib-python
+PyAudio
+numpy
+keyboard
+xlrd
+xlwt
+xlutils
