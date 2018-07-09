@@ -139,7 +139,7 @@ def main():
     speech.check_name()
     speech.common_talk_name()
     name_bot = speech.print_name()
-    if name_bot == name:
+    if name_bot in name:
         say('Hi, %s!' % name_bot)
     else:
         say('May I double check with you? Are you %s?' % name)
